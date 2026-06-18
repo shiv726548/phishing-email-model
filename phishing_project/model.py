@@ -74,3 +74,46 @@ else:
     print(f"\n✅ Decision: SAFE EMAIL (Model Confidence: {confidence:.2f}%)")
 
 
+
+# ==========================================
+# 6. MODEL EVALUATION & STATISTICS PROFILE
+# ==========================================
+print("\n=== Generating Project Performance Metrics ===")
+
+# Test Data for evaluation (Text, True Label)
+validation_set = [
+    ("Verify your banking info now.", 1),
+    ("Winner of the lottery prize!", 1),
+    ("Are you coming to the party later?", 0),
+    ("The report document is attached.", 0)
+]
+
+true_positives = 0
+false_positives = 0
+true_negatives = 0
+false_negatives = 0
+
+for text, true_label in validation_set:
+    pred_label, _ = classifier.predict(text)
+    if pred_label == 1 and true_label == 1:
+        true_positives += 1
+    elif pred_label == 1 and true_label == 0:
+        false_positives += 1
+    elif pred_label == 0 and true_label == 0:
+        true_negatives += 1
+    elif pred_label == 0 and true_label == 1:
+        false_negatives += 1
+
+# Calculate Machine Learning Matrix Equations
+total_tests = len(validation_set)
+accuracy = ((true_positives + true_negatives) / total_tests) * 100
+
+precision = (true_positives / (true_positives + false_positives) * 100) if (true_positives + false_positives) > 0 else 100
+recall = (true_positives / (true_positives + false_negatives) * 100) if (true_positives + false_negatives) > 0 else 100
+f1_score = (2 * precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+
+print(f"📊 Model Global Accuracy : {accuracy:.2f}%")
+print(f"🎯 Detection Precision  : {precision:.2f}%")
+print(f"🔍 Sensitivity (Recall)  : {recall:.2f}%")
+print(f"🧪 Balanced F1-Score     : {f1_score:.2f}%")
+print("==============================================")
